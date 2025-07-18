@@ -3,17 +3,27 @@ import { stylesCollections } from './styles';
 
 type BottomSheetProps = {
   title: string;
-  value?: number;
-  unit?: string;
+  value?: string;
+  description?: string;
 };
 
-export default function BottomSheet({ title, value, unit }: BottomSheetProps) {
+export default function BottomSheet({
+  title,
+  value,
+  description,
+}: BottomSheetProps) {
   const styles = stylesCollections();
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { flexDirection: description ? 'column' : 'row' },
+      ]}
+    >
       <Text style={styles.title}>
-        {title}: {value} {unit}
+        {title}: {value}
       </Text>
+      {description && <Text style={styles.description}>{description}</Text>}
     </View>
   );
 }

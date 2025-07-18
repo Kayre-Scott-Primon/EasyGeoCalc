@@ -6,15 +6,15 @@ export const stylesCollections = () => {
       position: 'absolute',
       bottom: 0,
       right: 0,
-      width: '50%',
+      minWidth: '50%',
       backgroundColor: 'white',
       borderTopLeftRadius: 20,
       borderLeftWidth: 1,
       borderBottomWidth: 1,
       borderTopWidth: 1,
       borderColor: 'gray',
-      flexDirection: 'row',
       justifyContent: 'center',
+      paddingHorizontal: 20,
     },
     title: {
       color: 'black',
@@ -22,6 +22,13 @@ export const stylesCollections = () => {
       fontWeight: 'bold',
       textAlign: 'center',
       marginVertical: 10,
+    },
+    description: {
+      color: 'gray',
+      fontSize: 16,
+      textAlign: 'center',
+      marginHorizontal: 10,
+      marginBottom: 10,
     },
   });
 };
