@@ -4,18 +4,26 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import BottomSheet from '../../components/BottomSheet';
 import ButtomMap from '../../components/ButtomMap';
 import ReturnButton from '../../components/ReturnButtom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { isPolygon } from '../../utils/geoVerificarions/polygon';
 import { calculateArea } from '../../utils/turf/area';
 import { convertAreaIfNeeded } from '../../utils/scales/convertionsArea';
+import type { MapType } from 'react-native-maps';
 
 export default function Area() {
+  const mapRef = useRef<MapView>(null);
+
   const stles = stylesCollections();
 
   const [pointsOfArea, setPointsOfArea] = useState<
     { latitude: number; longitude: number }[]
   >([]);
   const [area, setArea] = useState<string>('');
+  const [layer, setLayer] = useState<MapType>('satellite');
+  const [userLocation, setUserLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
 
   function clickOnMap(event: any) {
     const { coordinate } = event.nativeEvent;
@@ -24,6 +32,35 @@ export default function Area() {
     } else {
       setPointsOfArea([...pointsOfArea, coordinate]);
     }
+  }
+
+  function clearData() {
+    setPointsOfArea([]);
+    setArea('');
+  }
+
+  function centerUser() {
+    console.log('Centering user location', userLocation);
+    if (mapRef.current && userLocation) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: userLocation.latitude,
+          longitude: userLocation.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        },
+        1000,
+      );
+    }
+  }
+
+  function userMoves(event: any) {
+    const { coordinate } = event.nativeEvent;
+    setUserLocation(coordinate);
+  }
+
+  function changeLayer(layer: MapType) {
+    setLayer(layer);
   }
 
   useEffect(() => {
@@ -36,7 +73,14 @@ export default function Area() {
 
   return (
     <View style={stles.container}>
-      <MapView style={stles.map} mapType="satellite" onPress={clickOnMap}>
+      <MapView
+        ref={mapRef}
+        style={stles.map}
+        mapType={layer}
+        onPress={clickOnMap}
+        showsUserLocation
+        onUserLocationChange={userMoves}
+      >
         {pointsOfArea.map((point, index) => (
           <Marker key={index} coordinate={point} />
         ))}
@@ -48,7 +92,11 @@ export default function Area() {
           />
         )}
       </MapView>
-      <ButtomMap />
+      <ButtomMap
+        userAction={centerUser}
+        layerSelected={layer => changeLayer(layer)}
+        trashAction={clearData}
+      />
       <BottomSheet title="Área" value={area} />
       <ReturnButton />
     </View>

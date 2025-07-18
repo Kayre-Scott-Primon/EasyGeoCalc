@@ -1,10 +1,10 @@
 import { View } from 'react-native';
 import { stylesCollections } from './styles';
-import MapView, { Marker, Polyline } from 'react-native-maps';
+import MapView, { MapType, Marker, Polyline } from 'react-native-maps';
 import ReturnButton from '../../components/ReturnButtom';
 import ButtomMap from '../../components/ButtomMap';
 import BottomSheet from '../../components/BottomSheet';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { distanceBetweenPoints } from '../../utils/turf/distance';
 import { convertKilometerOrMeters } from '../../utils/scales/convertionsLinear';
 
@@ -22,6 +22,13 @@ export default function Distance() {
       pointB: null,
     });
   const [distance, setDistance] = useState<string>('');
+  const [layer, setLayer] = useState<MapType>('satellite');
+  const [userLocation, setUserLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+
+  const mapRef = useRef<MapView>(null);
 
   function clickOnMap(event: any) {
     const { coordinate } = event.nativeEvent;
@@ -43,6 +50,25 @@ export default function Distance() {
     }
   }
 
+  function clearData() {
+    setPointsToDistance({ pointA: null, pointB: null });
+    setDistance('');
+  }
+
+  function changeLayer(layer: MapType) {
+    setLayer(layer);
+  }
+
+  function centerUser() {
+    console.log('Centering user location');
+    // Implement user centering logic if needed
+  }
+
+  function userMoves(event: any) {
+    const { coordinate } = event.nativeEvent;
+    setUserLocation(coordinate);
+  }
+
   useEffect(() => {
     if (pointsToDistance.pointA && pointsToDistance.pointB) {
       const distance = distanceBetweenPoints({
@@ -58,7 +84,14 @@ export default function Distance() {
 
   return (
     <View style={stles.container}>
-      <MapView style={stles.map} mapType="satellite" onPress={clickOnMap}>
+      <MapView
+        ref={mapRef}
+        style={stles.map}
+        mapType={layer}
+        onPress={clickOnMap}
+        showsUserLocation
+        onUserLocationChange={userMoves}
+      >
         {pointsToDistance.pointA && (
           <Marker
             coordinate={pointsToDistance.pointA}
@@ -85,7 +118,11 @@ export default function Distance() {
         )}
       </MapView>
       <ReturnButton />
-      <ButtomMap />
+      <ButtomMap
+        userAction={centerUser}
+        layerSelected={layer => changeLayer(layer)}
+        trashAction={clearData}
+      />
       <BottomSheet title="Distancia" value={distance} />
     </View>
   );

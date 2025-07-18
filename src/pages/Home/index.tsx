@@ -3,6 +3,14 @@ import ItemList from './components/ItemList';
 import Header from './components/Header';
 import { stylesCollections } from './styles';
 import { useNavigation } from '@react-navigation/native';
+import type { StackNavigationProp } from '@react-navigation/stack';
+import { useEffect } from 'react';
+import { requestLocationPermission } from '../../utils/permissions/location';
+type RootStackParamList = {
+  Area: undefined;
+  Distance: undefined;
+  Info: undefined;
+};
 
 export default function Home() {
   const list = [
@@ -12,7 +20,11 @@ export default function Home() {
   ];
 
   const styles = stylesCollections();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+
+  useEffect(() => {
+    requestLocationPermission();
+  }, []);
 
   return (
     <View style={styles.container}>
