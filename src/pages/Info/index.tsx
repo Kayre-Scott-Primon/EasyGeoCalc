@@ -5,14 +5,14 @@ import ReturnButton from '../../components/ReturnButtom';
 import ButtomMap from '../../components/ButtomMap';
 import BottomSheet from '../../components/BottomSheet';
 
-export default function Distance() {
+export default function Info() {
   const stles = stylesCollections();
   return (
     <View style={stles.container}>
       <MapView style={stles.map} mapType="satellite"></MapView>
       <ReturnButton />
       <ButtomMap />
-      <BottomSheet title="Distancia" value={100} unit="m" />
+      <BottomSheet title="Info" />
     </View>
   );
 }
