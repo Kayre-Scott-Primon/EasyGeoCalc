@@ -17,6 +17,7 @@ export default function Home() {
     { id: '1', title: 'Calculo de area', page: 'Area' },
     { id: '2', title: 'Calculo de distancia', page: 'Distance' },
     { id: '3', title: 'Informacoes de um ponto', page: 'Info' },
+    { id: '4', title: 'Formas', page: 'Forms' },
   ];
 
   const styles = stylesCollections();

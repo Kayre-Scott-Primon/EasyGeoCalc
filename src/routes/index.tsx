@@ -5,6 +5,7 @@ import Home from '../pages/Home';
 import Area from '../pages/Area';
 import Distance from '../pages/Distance';
 import Info from '../pages/Info';
+import Forms from '../pages/Forms';
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
@@ -16,6 +17,7 @@ const AppNavigator = () => {
         <Screen name="Area" component={Area} />
         <Screen name="Distance" component={Distance} />
         <Screen name="Info" component={Info} />
+        <Screen name="Forms" component={Forms} />
       </Navigator>
     </NavigationContainer>
   );

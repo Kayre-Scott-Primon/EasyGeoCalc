@@ -6,7 +6,7 @@ export function calculateArea(
 ): number {
   const coords = points.map(p => [p.longitude, p.latitude]);
 
-  const poly = polygon([coords]);
+  const poly = polygon([coords.concat([coords[0]])]);
 
   const result = area(poly);
 
