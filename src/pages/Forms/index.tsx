@@ -8,6 +8,8 @@ import { Icon } from '@rneui/themed';
 import { useRef, useState } from 'react';
 import FormsButton from './components/FormsButtons';
 import { calculateArea } from '../../utils/turf/area';
+import { distanceBetweenPoints } from '../../utils/turf/distance';
+import { convertKilometerOrMeters } from '../../utils/scales/convertionsLinear';
 
 interface CoordinateType {
     latitude: number;
@@ -26,7 +28,6 @@ type FormsType = {
 export default function Forms() {
     const styles = stylesCollections();
 
-    const [distance, setDistance] = useState<string>('');
     const [layer, setLayer] = useState<MapType>('satellite');
     const [userLocation, setUserLocation] = useState<{
         latitude: number;
@@ -126,6 +127,15 @@ export default function Forms() {
         newVertices[index] = coord;
         setForms({ ...forms!, coordinates: newVertices, area: calculateArea(newVertices) });
     };
+
+    function centerOfTwoCoordinates(coord1: CoordinateType, coord2: CoordinateType): CoordinateType {
+        const latitudeDelta = (coord2.latitude - coord1.latitude) / 2;
+        const longitudeDelta = (coord2.longitude - coord1.longitude) / 2;
+        return {
+            latitude: coord1.latitude + latitudeDelta,
+            longitude: coord1.longitude + longitudeDelta
+        };
+    }
 
     function renderForms() {
         switch (forms?.type) {
@@ -235,6 +245,24 @@ export default function Forms() {
                                 }}
                             >
                                 <Icon name={"pencil"} type='material-community' size={40} color={isDraggingMarker ? "red" : "#ffae00ff"} />
+                            </Marker>
+                        ))}
+
+
+                        {/* Distancias */}
+                        {forms.coordinates.map((item, index) => (
+                            <Marker
+                                key={`distance-${index}`}
+                                coordinate={centerOfTwoCoordinates(item, forms.coordinates[(index == forms.coordinates.length - 1 ? 0 : index + 1)])}
+                            >
+                                <Text style={styles.distance}>
+                                    {convertKilometerOrMeters({
+                                        value: distanceBetweenPoints({ pointA: item, pointB: forms.coordinates[(index == forms.coordinates.length - 1 ? 0 : index + 1)] })
+                                    }).value.toFixed(2)}{" "}
+                                    {convertKilometerOrMeters({
+                                        value: distanceBetweenPoints({ pointA: item, pointB: forms.coordinates[(index == forms.coordinates.length - 1 ? 0 : index + 1)] })
+                                    }).unit}
+                                </Text>
                             </Marker>
                         ))}
                     </>

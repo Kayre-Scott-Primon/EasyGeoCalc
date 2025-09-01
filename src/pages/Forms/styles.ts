@@ -10,5 +10,9 @@ export const stylesCollections = () => {
     map: {
       flex: 1,
     },
+    distance: {
+      color: '#ffffff',
+      fontSize: 18
+    }
   });
 };
